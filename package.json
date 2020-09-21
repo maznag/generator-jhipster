@@ -114,7 +114,7 @@
         "sinon": "9.0.3",
         "sinon-chai": "3.5.0",
         "terser-webpack-plugin": "4.1.0",
-        "webpack": "4.44.1",
+        "webpack": "4.44.2",
         "webpack-cli": "3.3.12",
         "yeoman-assert": "3.1.1",
         "yeoman-test": "3.0.0"
