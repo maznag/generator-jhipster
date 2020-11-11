@@ -37,12 +37,6 @@ module.exports = class extends BaseBlueprintGenerator {
     constructor(args, opts) {
         super(args, opts);
 
-        // This adds support for a `--from-cli` flag
-        this.option('from-cli', {
-            desc: 'Indicates the command is run from JHipster CLI',
-            type: Boolean,
-            defaults: false,
-        });
         this.option('skip-build', {
             desc: 'Skips building the application',
             type: Boolean,
@@ -751,7 +745,7 @@ module.exports = class extends BaseBlueprintGenerator {
 
                         this.log(chalk.bold('\nDeploying application'));
 
-                        const herokuPush = execCmd('git push heroku HEAD:master', { maxBuffer: 1024 * 10000 });
+                        const herokuPush = execCmd('git push heroku HEAD:main', { maxBuffer: 1024 * 10000 });
 
                         herokuPush.child.stdout.on('data', data => {
                             this.log(data);

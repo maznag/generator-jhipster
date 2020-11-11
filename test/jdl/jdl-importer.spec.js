@@ -25,7 +25,6 @@ const { expect } = require('chai');
 const ApplicationTypes = require('../../jdl/jhipster/application-types');
 const DatabaseTypes = require('../../jdl/jhipster/database-types');
 const { createImporterFromFiles, createImporterFromContent } = require('../../jdl/jdl-importer');
-const { formatDateForLiquibase } = require('../../jdl/utils/format-utils');
 
 describe('JDLImporter', () => {
     describe('createImporterFromFiles', () => {
@@ -84,7 +83,6 @@ describe('JDLImporter', () => {
                     skipServer: true,
                     microserviceName: 'mymicroservice',
                     javadoc: '',
-                    changelogDate: '20190101000700',
                 },
                 Department: {
                     fields: [
@@ -147,7 +145,6 @@ describe('JDLImporter', () => {
                     applications: '*',
                     microserviceName: 'mymicroservice',
                     javadoc: '',
-                    changelogDate: '20190101000100',
                 },
                 Employee: {
                     fields: [
@@ -233,7 +230,6 @@ describe('JDLImporter', () => {
                     applications: '*',
                     microserviceName: 'mymicroservice',
                     searchEngine: 'elasticsearch',
-                    changelogDate: '20190101000400',
                 },
                 Job: {
                     fields: [
@@ -295,7 +291,6 @@ describe('JDLImporter', () => {
                     applications: '*',
                     microserviceName: 'mymicroservice',
                     javadoc: '',
-                    changelogDate: '20190101000300',
                 },
                 JobHistory: {
                     fields: [
@@ -355,7 +350,6 @@ describe('JDLImporter', () => {
                     fluentMethods: true,
                     applications: '*',
                     microserviceName: 'mymicroservice',
-                    changelogDate: '20190101000200',
                 },
                 Location: {
                     fields: [
@@ -397,7 +391,6 @@ describe('JDLImporter', () => {
                     applications: '*',
                     microserviceName: 'mymicroservice',
                     javadoc: '',
-                    changelogDate: '20190101000500',
                 },
                 Region: {
                     fields: [
@@ -427,7 +420,6 @@ describe('JDLImporter', () => {
                     applications: '*',
                     microserviceName: 'mymicroservice',
                     javadoc: '',
-                    changelogDate: '20190101000800',
                 },
                 Task: {
                     fields: [
@@ -462,7 +454,6 @@ describe('JDLImporter', () => {
                     applications: '*',
                     microserviceName: 'mymicroservice',
                     javadoc: '',
-                    changelogDate: '20190101000600',
                 },
             };
 
@@ -471,7 +462,6 @@ describe('JDLImporter', () => {
                     applicationName: 'MyApp',
                     applicationType: ApplicationTypes.MONOLITH,
                     databaseType: DatabaseTypes.SQL,
-                    creationTimestamp: '2019-01-01',
                 });
                 returned = importer.import();
                 returned.exportedEntities = returned.exportedEntities
@@ -686,20 +676,23 @@ relationship OneToOne {
                         packageFolder: 'com/mathieu/tata',
                         authenticationType: 'jwt',
                         websocket: false,
+                        withAdminUi: true,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
                         applicationType: 'monolith',
                         cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8080',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        useSass: true,
+                        entitySuffix: '',
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: false,
@@ -707,11 +700,9 @@ relationship OneToOne {
                         clientFramework: 'angularX',
                         clientTheme: 'none',
                         clientThemeVariant: '',
-                        nativeLanguage: 'en',
                         skipUserManagement: false,
                         skipClient: false,
                         skipServer: false,
-                        creationTimestamp: 1546300800000,
                     },
                 },
                 {
@@ -722,20 +713,23 @@ relationship OneToOne {
                         packageFolder: 'com/mathieu/titi',
                         authenticationType: 'jwt',
                         websocket: false,
+                        withAdminUi: true,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'gateway',
                         cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8080',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        useSass: true,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: 'eureka',
@@ -743,11 +737,9 @@ relationship OneToOne {
                         clientFramework: 'angularX',
                         clientTheme: 'none',
                         clientThemeVariant: '',
-                        nativeLanguage: 'en',
                         skipUserManagement: false,
                         skipClient: false,
                         skipServer: false,
-                        creationTimestamp: 1546300800000,
                     },
                 },
                 {
@@ -760,25 +752,26 @@ relationship OneToOne {
                         websocket: false,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'microservice',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8081',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        cacheProvider: 'hazelcast',
+                        cacheProvider: 'ehcache',
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: 'eureka',
                         clientPackageManager: 'npm',
-                        nativeLanguage: 'en',
                         skipUserManagement: true,
                         skipClient: true,
-                        creationTimestamp: 1546300800000,
                     },
                 },
                 {
@@ -789,20 +782,23 @@ relationship OneToOne {
                         packageFolder: 'com/mathieu/tutu',
                         authenticationType: 'jwt',
                         websocket: false,
+                        withAdminUi: true,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'monolith',
                         cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8080',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        useSass: true,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: false,
@@ -810,20 +806,16 @@ relationship OneToOne {
                         clientFramework: 'angularX',
                         clientTheme: 'none',
                         clientThemeVariant: '',
-                        nativeLanguage: 'en',
                         skipUserManagement: false,
                         skipClient: false,
                         skipServer: false,
-                        creationTimestamp: 1546300800000,
                     },
                 },
             ];
             const APPLICATION_NAMES = ['tata', 'titi', 'toto', 'tutu'];
 
             before(() => {
-                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'applications2.jdl')], {
-                    creationTimestamp: '2019-01-01',
-                });
+                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'applications2.jdl')]);
                 importer.import();
                 APPLICATION_NAMES.forEach(applicationName => {
                     contents.push(JSON.parse(fse.readFileSync(path.join(applicationName, '.yo-rc.json'), 'utf-8')));
@@ -861,6 +853,7 @@ relationship OneToOne {
                         enableHibernateCache: true,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
                         buildTool: 'maven',
                         searchEngine: false,
@@ -868,10 +861,9 @@ relationship OneToOne {
                         applicationType: 'monolith',
                         cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8080',
                         enableSwaggerCodegen: false,
-                        useSass: true,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: false,
@@ -879,11 +871,12 @@ relationship OneToOne {
                         clientFramework: 'angularX',
                         clientTheme: 'yeti',
                         clientThemeVariant: 'primary',
-                        nativeLanguage: 'en',
                         skipUserManagement: false,
+                        entitySuffix: '',
+                        reactive: false,
                         skipClient: false,
                         skipServer: false,
-                        creationTimestamp: 1546300800000,
+                        withAdminUi: true,
                     },
                 },
                 {
@@ -897,24 +890,25 @@ relationship OneToOne {
                         enableHibernateCache: true,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'microservice',
-                        cacheProvider: 'hazelcast',
+                        cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8091',
                         enableSwaggerCodegen: false,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: 'eureka',
                         clientPackageManager: 'npm',
-                        nativeLanguage: 'en',
                         skipUserManagement: true,
                         skipClient: true,
-                        creationTimestamp: 1546300800000,
                     },
                 },
                 {
@@ -928,24 +922,25 @@ relationship OneToOne {
                         enableHibernateCache: true,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'microservice',
-                        cacheProvider: 'hazelcast',
+                        cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8092',
                         enableSwaggerCodegen: false,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: 'eureka',
                         clientPackageManager: 'npm',
-                        nativeLanguage: 'en',
                         skipUserManagement: true,
                         skipClient: true,
-                        creationTimestamp: 1546300800000,
                     },
                 },
             ];
@@ -1010,15 +1005,10 @@ relationship OneToOne {
             ];
             let importState;
             before(() => {
-                const importer = createImporterFromFiles(
-                    [
-                        path.join(__dirname, 'test-files', 'integration', 'file1.jdl'),
-                        path.join(__dirname, 'test-files', 'integration', 'file2.jdl'),
-                    ],
-                    {
-                        creationTimestamp: '2019-01-01',
-                    }
-                );
+                const importer = createImporterFromFiles([
+                    path.join(__dirname, 'test-files', 'integration', 'file1.jdl'),
+                    path.join(__dirname, 'test-files', 'integration', 'file2.jdl'),
+                ]);
                 importState = importer.import();
             });
 
@@ -1053,21 +1043,15 @@ relationship OneToOne {
                                 readJSON = JSON.parse(
                                     fse.readFileSync(path.join(applicationName, '.jhipster', `${entityName}.json`), 'utf-8').toString()
                                 );
-                                expect(readJSON.changelogDate).not.to.be.undefined;
-                                delete readJSON.changelogDate;
                                 expect(readJSON).to.deep.equal(expectedEntities[index]);
                             });
                             break;
                         case 'mySecondApp': // only E
                             readJSON = JSON.parse(fse.readFileSync(path.join(applicationName, '.jhipster', 'E.json'), 'utf-8').toString());
-                            expect(readJSON.changelogDate).not.to.be.undefined;
-                            delete readJSON.changelogDate;
                             expect(readJSON).to.deep.equal(expectedEntities[2]);
                             break;
                         case 'myThirdApp': // only F
                             readJSON = JSON.parse(fse.readFileSync(path.join(applicationName, '.jhipster', 'F.json'), 'utf-8').toString());
-                            expect(readJSON.changelogDate).not.to.be.undefined;
-                            delete readJSON.changelogDate;
                             expect(readJSON).to.deep.equal(expectedEntities[3]);
                             break;
                         default:
@@ -1125,17 +1109,17 @@ relationship OneToOne {
             it('sets the options', () => {
                 expect(returned.exportedEntities[0].service).to.equal('serviceClass');
                 expect(returned.exportedEntities[0].dto).to.equal('mapstruct');
-                expect(returned.exportedEntities[0].skipClient).to.equal(true);
-                expect(returned.exportedEntities[0].myCustomUnaryOption).to.equal(true);
+                expect(returned.exportedEntities[0].skipClient).to.be.true;
+                expect(returned.exportedEntities[0].myCustomUnaryOption).to.be.true;
                 expect(returned.exportedEntities[0].myCustomBinaryOption).to.equal('customValue');
                 expect(returned.exportedEntities[1].pagination).to.equal('pagination');
                 expect(returned.exportedEntities[1].dto).to.equal('mapstruct');
                 expect(returned.exportedEntities[1].service).to.equal('serviceClass');
-                expect(returned.exportedEntities[2].skipClient).to.equal(true);
-                expect(returned.exportedEntities[2].jpaMetamodelFiltering).to.equal(true);
+                expect(returned.exportedEntities[2].skipClient).to.be.true;
+                expect(returned.exportedEntities[2].jpaMetamodelFiltering).to.be.true;
                 expect(returned.exportedEntities[2].pagination).to.equal('pagination');
                 expect(returned.exportedEntities[2].myCustomBinaryOption).to.equal('customValue2');
-                expect(returned.exportedEntities[0].fields[0].options.id).to.equal(true);
+                expect(returned.exportedEntities[0].fields[0].options.id).to.be.true;
                 expect(returned.exportedEntities[0].fields[0].options.multiValue).to.deep.equal(['value1', 'value2', 'value3']);
             });
         });
@@ -1197,18 +1181,20 @@ relationship OneToOne {
                         websocket: false,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'monolith',
                         cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8080',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        useSass: true,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: false,
@@ -1216,11 +1202,10 @@ relationship OneToOne {
                         clientFramework: 'angularX',
                         clientTheme: 'none',
                         clientThemeVariant: '',
-                        nativeLanguage: 'en',
                         skipUserManagement: false,
                         skipClient: false,
                         skipServer: false,
-                        creationTimestamp: 1546300800000,
+                        withAdminUi: true,
                     },
                 },
                 {
@@ -1233,18 +1218,20 @@ relationship OneToOne {
                         websocket: false,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'gateway',
                         cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8080',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        useSass: true,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: 'eureka',
@@ -1252,11 +1239,10 @@ relationship OneToOne {
                         clientFramework: 'angularX',
                         clientTheme: 'none',
                         clientThemeVariant: '',
-                        nativeLanguage: 'en',
                         skipUserManagement: false,
                         skipClient: false,
                         skipServer: false,
-                        creationTimestamp: 1546300800000,
+                        withAdminUi: true,
                     },
                 },
                 {
@@ -1269,25 +1255,26 @@ relationship OneToOne {
                         websocket: false,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'microservice',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8081',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        cacheProvider: 'hazelcast',
+                        cacheProvider: 'ehcache',
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: 'eureka',
                         clientPackageManager: 'npm',
-                        nativeLanguage: 'en',
                         skipUserManagement: true,
                         skipClient: true,
-                        creationTimestamp: 1546300800000,
                     },
                 },
                 {
@@ -1300,18 +1287,20 @@ relationship OneToOne {
                         websocket: false,
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         prodDatabaseType: 'postgresql',
+                        reactive: false,
                         buildTool: 'maven',
                         searchEngine: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         applicationType: 'monolith',
                         cacheProvider: 'ehcache',
                         testFrameworks: [],
-                        languages: ['en', 'fr'],
+                        languages: [],
                         serverPort: '8080',
                         enableSwaggerCodegen: false,
                         enableHibernateCache: true,
-                        useSass: true,
                         jhiPrefix: 'jhi',
                         messageBroker: false,
                         serviceDiscoveryType: false,
@@ -1319,11 +1308,10 @@ relationship OneToOne {
                         clientFramework: 'angularX',
                         clientTheme: 'none',
                         clientThemeVariant: '',
-                        nativeLanguage: 'en',
                         skipUserManagement: false,
                         skipClient: false,
                         skipServer: false,
-                        creationTimestamp: 1546300800000,
+                        withAdminUi: true,
                     },
                 },
                 {
@@ -1343,9 +1331,7 @@ relationship OneToOne {
             const APPLICATION_NAMES = ['tata', 'titi', 'toto', 'tutu'];
 
             before(() => {
-                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'applications3.jdl')], {
-                    creationTimestamp: '2019-01-01',
-                });
+                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'applications3.jdl')]);
                 importer.import();
                 APPLICATION_NAMES.forEach(applicationName => {
                     contents.push(JSON.parse(fse.readFileSync(path.join(applicationName, '.yo-rc.json'), 'utf-8')));
@@ -1456,16 +1442,17 @@ relationship OneToOne {
                     'generator-jhipster': {
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         enableHibernateCache: true,
                         enableSwaggerCodegen: false,
                         enableTranslation: true,
                         jhiPrefix: 'jhi',
-                        languages: ['en', 'fr'],
+                        languages: [],
                         messageBroker: false,
-                        nativeLanguage: 'en',
                         packageName: 'com.jhipster.demo.store',
                         packageFolder: 'com/jhipster/demo/store',
                         prodDatabaseType: 'mysql',
+                        reactive: false,
                         searchEngine: false,
                         serviceDiscoveryType: false,
                         skipClient: false,
@@ -1477,14 +1464,14 @@ relationship OneToOne {
                         authenticationType: 'jwt',
                         cacheProvider: 'hazelcast',
                         buildTool: 'gradle',
+                        entitySuffix: '',
                         clientFramework: 'react',
                         clientTheme: 'none',
                         clientThemeVariant: '',
-                        useSass: true,
                         skipUserManagement: false,
                         clientPackageManager: 'npm',
                         serverPort: '8080',
-                        creationTimestamp: 1546300800000,
+                        withAdminUi: true,
                     },
                     entities: [
                         'Customer',
@@ -1501,18 +1488,20 @@ relationship OneToOne {
                     'generator-jhipster': {
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         enableHibernateCache: true,
                         enableSwaggerCodegen: false,
                         enableTranslation: true,
                         jhiPrefix: 'jhi',
-                        languages: ['en', 'fr'],
+                        languages: [],
                         messageBroker: false,
-                        nativeLanguage: 'en',
                         packageName: 'com.jhipster.demo.product',
                         packageFolder: 'com/jhipster/demo/product',
                         prodDatabaseType: 'mysql',
+                        reactive: false,
                         searchEngine: false,
                         serviceDiscoveryType: false,
+                        entitySuffix: '',
                         skipClient: true,
                         testFrameworks: [],
                         websocket: false,
@@ -1524,7 +1513,6 @@ relationship OneToOne {
                         serverPort: '8081',
                         skipUserManagement: true,
                         clientPackageManager: 'npm',
-                        creationTimestamp: 1546300800000,
                     },
                     entities: ['Product', 'ProductCategory', 'ProductOrder', 'OrderItem'],
                 },
@@ -1532,30 +1520,31 @@ relationship OneToOne {
                     'generator-jhipster': {
                         databaseType: 'sql',
                         devDatabaseType: 'h2Disk',
+                        dtoSuffix: 'DTO',
                         enableHibernateCache: true,
                         enableSwaggerCodegen: false,
                         enableTranslation: true,
                         jhiPrefix: 'jhi',
-                        languages: ['en', 'fr'],
+                        languages: [],
                         messageBroker: false,
-                        nativeLanguage: 'en',
                         packageName: 'com.jhipster.demo.invoice',
                         packageFolder: 'com/jhipster/demo/invoice',
                         prodDatabaseType: 'mysql',
+                        reactive: false,
                         searchEngine: false,
                         serviceDiscoveryType: false,
                         skipClient: true,
                         testFrameworks: [],
                         websocket: false,
                         baseName: 'invoice',
+                        entitySuffix: '',
                         applicationType: 'microservice',
                         authenticationType: 'jwt',
                         buildTool: 'gradle',
                         serverPort: '8082',
                         skipUserManagement: true,
                         clientPackageManager: 'npm',
-                        cacheProvider: 'hazelcast',
-                        creationTimestamp: 1546300800000,
+                        cacheProvider: 'ehcache',
                     },
                     entities: ['Invoice', 'Shipment'],
                 },
@@ -1563,16 +1552,18 @@ relationship OneToOne {
                     'generator-jhipster': {
                         databaseType: 'mongodb',
                         devDatabaseType: 'mongodb',
+                        dtoSuffix: 'DTO',
                         enableHibernateCache: false,
                         enableSwaggerCodegen: false,
                         enableTranslation: true,
+                        entitySuffix: '',
                         jhiPrefix: 'jhi',
-                        languages: ['en', 'fr'],
+                        languages: [],
                         messageBroker: false,
-                        nativeLanguage: 'en',
                         packageName: 'com.jhipster.demo.notification',
                         packageFolder: 'com/jhipster/demo/notification',
                         prodDatabaseType: 'mongodb',
+                        reactive: false,
                         searchEngine: false,
                         serviceDiscoveryType: false,
                         skipClient: true,
@@ -1586,7 +1577,6 @@ relationship OneToOne {
                         serverPort: '8083',
                         skipUserManagement: true,
                         clientPackageManager: 'npm',
-                        creationTimestamp: 1546300800000,
                     },
                     entities: ['Notification'],
                 },
@@ -1624,9 +1614,7 @@ relationship OneToOne {
             const FOLDER_NAMES = ['store', 'product', 'invoice', 'notification', 'docker-compose', 'kubernetes'];
 
             before(() => {
-                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'realistic_sample.jdl')], {
-                    creationTimestamp: '2019-01-01',
-                });
+                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'realistic_sample.jdl')]);
                 importer.import();
                 FOLDER_NAMES.forEach(applicationName => {
                     contents.push(JSON.parse(fse.readFileSync(path.join(applicationName, '.yo-rc.json'), 'utf-8')));
@@ -1710,7 +1698,6 @@ entity F
 paginate * with infinite-scroll
 `,
                     {
-                        creationTimestamp: new Date(2020, 0, 1, 1, 0, 0),
                         generatorVersion: '7.0.0',
                     }
                 );
@@ -1734,7 +1721,6 @@ paginate * with infinite-scroll
             it('should set them', () => {
                 expect(entityA).to.deep.equal({
                     applications: ['tata'],
-                    changelogDate: formatDateForLiquibase({ date: new Date(2020, 0, 1, 1, 0, 0), increment: 1 }),
                     dto: 'no',
                     embedded: false,
                     entityTableName: 'a',
@@ -1749,7 +1735,6 @@ paginate * with infinite-scroll
                 });
                 expect(entityB).to.deep.equal({
                     applications: ['tata'],
-                    changelogDate: formatDateForLiquibase({ date: new Date(2020, 0, 1, 1, 0, 0), increment: 2 }),
                     dto: 'no',
                     embedded: false,
                     entityTableName: 'b',
@@ -1764,7 +1749,6 @@ paginate * with infinite-scroll
                 });
                 expect(entityCInTata).to.deep.equal({
                     applications: ['tata', 'tutu'],
-                    changelogDate: formatDateForLiquibase({ date: new Date(2020, 0, 1, 1, 0, 0), increment: 3 }),
                     dto: 'no',
                     embedded: false,
                     entityTableName: 'c',
@@ -1779,7 +1763,6 @@ paginate * with infinite-scroll
                 });
                 expect(entityCInTutu).to.deep.equal({
                     applications: ['tata', 'tutu'],
-                    changelogDate: formatDateForLiquibase({ date: new Date(2020, 0, 1, 1, 0, 0), increment: 3 }),
                     dto: 'no',
                     embedded: false,
                     entityTableName: 'c',
@@ -1794,7 +1777,6 @@ paginate * with infinite-scroll
                 });
                 expect(entityD).to.deep.equal({
                     applications: ['tutu'],
-                    changelogDate: formatDateForLiquibase({ date: new Date(2020, 0, 1, 1, 0, 0), increment: 4 }),
                     dto: 'mapstruct',
                     embedded: false,
                     entityTableName: 'd',
@@ -1809,7 +1791,6 @@ paginate * with infinite-scroll
                 });
                 expect(entityE).to.deep.equal({
                     applications: ['tutu'],
-                    changelogDate: formatDateForLiquibase({ date: new Date(2020, 0, 1, 1, 0, 0), increment: 5 }),
                     dto: 'no',
                     embedded: false,
                     entityTableName: 'e',
@@ -1847,7 +1828,6 @@ entity A
 paginate * with infinite-scroll
 `,
                     {
-                        creationTimestamp: new Date(2020, 0, 1, 1, 0, 0),
                         generatorVersion: '7.0.0',
                         skipFileGeneration: true,
                     }
@@ -1865,9 +1845,7 @@ paginate * with infinite-scroll
         });
         context('when not exporting entities but only applications', () => {
             before(() => {
-                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'application.jdl')], {
-                    creationTimestamp: '2019-01-01',
-                });
+                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'application.jdl')]);
                 importer.import();
             });
             after(() => {
@@ -1884,9 +1862,7 @@ paginate * with infinite-scroll
             let importState;
 
             before(() => {
-                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'application_with_blueprints.jdl')], {
-                    creationTimestamp: '2019-01-01',
-                });
+                const importer = createImporterFromFiles([path.join(__dirname, 'test-files', 'application_with_blueprints.jdl')]);
                 importState = importer.import();
             });
             after(() => {
@@ -1908,28 +1884,29 @@ paginate * with infinite-scroll
                             clientPackageManager: 'npm',
                             clientTheme: 'none',
                             clientThemeVariant: '',
-                            creationTimestamp: 1546300800000,
                             databaseType: 'sql',
                             devDatabaseType: 'h2Disk',
+                            dtoSuffix: 'DTO',
                             enableHibernateCache: true,
                             enableSwaggerCodegen: false,
                             enableTranslation: true,
+                            entitySuffix: '',
                             jhiPrefix: 'jhi',
-                            languages: ['en', 'fr'],
+                            languages: [],
                             messageBroker: false,
-                            nativeLanguage: 'en',
                             packageFolder: 'com/mycompany/myapp',
                             packageName: 'com.mycompany.myapp',
                             prodDatabaseType: 'postgresql',
                             searchEngine: false,
+                            reactive: false,
                             serverPort: '8080',
                             serviceDiscoveryType: false,
                             skipClient: false,
                             skipServer: false,
                             skipUserManagement: false,
                             testFrameworks: [],
-                            useSass: true,
                             websocket: false,
+                            withAdminUi: true,
                         },
                     },
                 ]);

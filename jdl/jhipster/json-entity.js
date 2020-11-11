@@ -18,9 +18,11 @@
  */
 
 const { merge } = require('../utils/object-utils');
-const { formatDateForLiquibase, formatComment } = require('../utils/format-utils');
+const { formatComment } = require('../utils/format-utils');
 const { upperFirst } = require('../utils/string-utils');
 const { getTableNameFromEntityName } = require('./entity-table-name-creator');
+const binaryOptions = require('./binary-options');
+const unaryOptions = require('./unary-options');
 
 /**
  * The JSONEntity class represents a read-to-be exported to JSON entity.
@@ -32,7 +34,6 @@ class JSONEntity {
      *        - entityName, the entity name (mandatory)
      *        - fields, a field iterable
      *        - relationships, a relationship iterable
-     *        - changelogDate,
      *        - javadoc,
      *        - entityTableName, defaults to the snake-cased entity name,
      *        - dto, defaults to 'no',
@@ -48,11 +49,10 @@ class JSONEntity {
         if (!args || !args.entityName) {
             throw new Error('At least an entity name must be passed.');
         }
-        const merged = merge(defaults(args.entityName), args);
+        const merged = merge(getDefaults(args.entityName), args);
         this.name = merged.name;
         this.fields = merged.fields;
         this.relationships = merged.relationships;
-        this.changelogDate = merged.changelogDate;
         this.javadoc = merged.javadoc;
         this.entityTableName = merged.entityTableName;
         this.dto = merged.dto;
@@ -115,20 +115,19 @@ class JSONEntity {
 
 module.exports = JSONEntity;
 
-function defaults(entityName) {
+function getDefaults(entityName) {
     return {
         name: upperFirst(entityName),
         fields: [],
         relationships: [],
-        changelogDate: formatDateForLiquibase(),
         javadoc: formatComment(),
         entityTableName: getTableNameFromEntityName(entityName),
-        dto: 'no',
-        pagination: 'no',
-        service: 'no',
+        [binaryOptions.Options.DTO]: binaryOptions.DefaultValues[binaryOptions.Options.DTO],
+        [binaryOptions.Options.PAGINATION]: binaryOptions.DefaultValues[binaryOptions.Options.PAGINATION],
+        [binaryOptions.Options.SERVICE]: binaryOptions.DefaultValues[binaryOptions.Options.SERVICE],
         fluentMethods: true,
-        readOnly: false,
-        embedded: false,
+        [unaryOptions.READ_ONLY]: false,
+        [unaryOptions.EMBEDDED]: false,
         jpaMetamodelFiltering: false,
         applications: [],
     };

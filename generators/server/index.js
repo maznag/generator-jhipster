@@ -35,13 +35,6 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
     constructor(args, opts) {
         super(args, opts);
 
-        // This adds support for a `--from-cli` flag
-        this.option('from-cli', {
-            desc: 'Indicates the command is run from JHipster CLI',
-            type: Boolean,
-            defaults: false,
-        });
-
         // This adds support for a `--experimental` flag which can be used to enable experimental features
         this.option('experimental', {
             desc:
@@ -239,6 +232,10 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
                 this.loadServerConfig();
                 this.loadTranslationConfig();
             },
+
+            createUserManagementEntities() {
+                this.createUserManagementEntities();
+            },
         };
     }
 
@@ -262,7 +259,6 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
                     this.cacheProvider
                 );
                 this.testsNeedCsrf = ['uaa', 'oauth2', 'session'].includes(this.authenticationType);
-                this.pkType = this.getPkType(this.databaseType);
 
                 this.jhiTablePrefix = this.getTableName(this.jhiPrefix);
 
@@ -305,6 +301,12 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
     _default() {
         return {
             ...super._missingPreDefault(),
+
+            loadUserManagementEntities() {
+                if (!this.configOptions.sharedEntities) return;
+                // Make user entity available to templates.
+                this.user = this.configOptions.sharedEntities.User;
+            },
 
             insight() {
                 statistics.sendSubGenEvent('generator', 'server', {
@@ -361,11 +363,14 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
                     const prodDatabaseType = this.jhipsterConfig.prodDatabaseType;
                     if (prodDatabaseType === 'no' || prodDatabaseType === 'oracle') {
                         scriptsStorage.set(
-                            'docker:db',
+                            'docker:db:up',
                             `echo "Docker for db ${prodDatabaseType} not configured for application ${this.baseName}"`
                         );
                     } else {
-                        scriptsStorage.set('docker:db', `docker-compose -f src/main/docker/${prodDatabaseType}.yml up -d`);
+                        scriptsStorage.set({
+                            'docker:db:up': `docker-compose -f src/main/docker/${prodDatabaseType}.yml up -d`,
+                            'docker:db:down': `docker-compose -f src/main/docker/${prodDatabaseType}.yml down -v --remove-orphans`,
+                        });
                     }
                 } else {
                     const dockerFile = `src/main/docker/${databaseType}.yml`;
@@ -377,19 +382,24 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
                     if (databaseType === 'couchbase' || databaseType === 'cassandra') {
                         scriptsStorage.set({
                             'docker:db:build': `docker-compose -f ${dockerFile} build`,
-                            'docker:db': `docker-compose -f ${dockerFile} up -d`,
+                            'docker:db:up': `docker-compose -f ${dockerFile} up -d`,
+                            'docker:db:down': `docker-compose -f ${dockerFile} down -v --remove-orphans`,
                         });
                     } else if (this.fs.exists(this.destinationPath(dockerFile))) {
-                        scriptsStorage.set('docker:db', `docker-compose -f ${dockerFile} up -d`);
+                        scriptsStorage.set({
+                            'docker:db:up': `docker-compose -f ${dockerFile} up -d`,
+                            'docker:db:down': `docker-compose -f ${dockerFile} down -v --remove-orphans`,
+                        });
                     } else {
                         scriptsStorage.set(
-                            'docker:db',
+                            'docker:db:up',
                             `echo "Docker for db ${databaseType} not configured for application ${this.baseName}"`
                         );
                     }
                 }
 
-                const dockerOthers = [];
+                const dockerOthersUp = [];
+                const dockerOthersDown = [];
                 const dockerBuild = [];
                 ['keycloak', 'elasticsearch', 'kafka', 'consul', 'redis', 'memcached', 'jhipster-registry'].forEach(dockerConfig => {
                     const dockerFile = `src/main/docker/${dockerConfig}.yml`;
@@ -398,20 +408,26 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
                             scriptsStorage.set(`docker:${dockerConfig}:build`, `docker-compose -f ${dockerFile} build`);
                             dockerBuild.push(`npm run docker:${dockerConfig}:build`);
                         }
-                        scriptsStorage.set(`docker:${dockerConfig}`, `docker-compose -f ${dockerFile} up -d`);
-                        dockerOthers.push(`npm run docker:${dockerConfig}`);
+                        scriptsStorage.set(`docker:${dockerConfig}:up`, `docker-compose -f ${dockerFile} up -d`);
+                        dockerOthersUp.push(`npm run docker:${dockerConfig}:up`);
+                        scriptsStorage.set(`docker:${dockerConfig}:down`, `docker-compose -f ${dockerFile} down -v --remove-orphans`);
+                        dockerOthersDown.push(`npm run docker:${dockerConfig}:down`);
                     }
                 });
                 scriptsStorage.set({
-                    'predocker:others': dockerBuild.join(' && '),
-                    'docker:others': dockerOthers.join(' && '),
-                    'ci:e2e:prepare:docker': 'npm run docker:db && npm run docker:others && docker ps -a',
+                    'predocker:others:up': dockerBuild.join(' && '),
+                    'docker:others:up': dockerOthersUp.join(' && '),
+                    'docker:others:down': dockerOthersDown.join(' && '),
+                    'ci:e2e:prepare:docker': 'npm run docker:db:up && npm run docker:others:up && docker ps -a',
+                    'ci:e2e:prepare': 'npm run ci:e2e:prepare:docker',
+                    'ci:e2e:teardown:docker': 'npm run docker:db:down --if-present && npm run docker:others:down && docker ps -a',
+                    'ci:e2e:teardown': 'npm run ci:e2e:teardown:docker',
                 });
             },
             packageJsonBackendScripts() {
                 const packageJsonStorage = this.createStorage('package.json');
                 const scriptsStorage = packageJsonStorage.createStorage('scripts');
-                const javaCommonLog = `-Dlogging.level.ROOT=OFF -Dlogging.level.org.zalando=OFF -Dlogging.level.io.github.jhipster=OFF -Dlogging.level.${this.jhipsterConfig.packageName}=OFF`;
+                const javaCommonLog = `-Dlogging.level.ROOT=OFF -Dlogging.level.org.zalando=OFF -Dlogging.level.tech.jhipster=OFF -Dlogging.level.${this.jhipsterConfig.packageName}=OFF`;
                 const javaTestLog =
                     '-Dlogging.level.org.springframework=OFF -Dlogging.level.org.springframework.web=OFF -Dlogging.level.org.springframework.security=OFF';
 
@@ -434,8 +450,8 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
                         'backend:info': './gradlew -v',
                         'backend:doc:test': `./gradlew javadoc ${excludeWebpack}`,
                         'backend:nohttp:test': `./gradlew checkstyleNohttp ${excludeWebpack}`,
-                        'java:jar': './gradlew bootJar -x test',
-                        'java:war': './gradlew bootWar -Pwar -x test',
+                        'java:jar': './gradlew bootJar -x test -x integrationTest',
+                        'java:war': './gradlew bootWar -Pwar -x test -x integrationTest',
                         'java:docker': './gradlew bootJar jibDockerBuild',
                         'backend:unit:test': `./gradlew test integrationTest ${excludeWebpack} ${javaCommonLog} ${javaTestLog}`,
                         'postci:e2e:package': 'cp build/libs/*SNAPSHOT.$npm_package_config_packaging e2e.$npm_package_config_packaging',
@@ -451,7 +467,7 @@ module.exports = class JHipsterServerGenerator extends BaseBlueprintGenerator {
                     'java:docker:prod': 'npm run java:docker -- -Pprod',
                     'ci:backend:test':
                         'npm run backend:info && npm run backend:doc:test && npm run backend:nohttp:test && npm run backend:unit:test',
-                    'server:package': 'npm run java:$npm_package_config_packaging:$npm_package_config_default_environment',
+                    'ci:server:package': 'npm run java:$npm_package_config_packaging:$npm_package_config_default_environment',
                     'ci:e2e:package':
                         'npm run java:$npm_package_config_packaging:$npm_package_config_default_environment -- -Pe2e -Denforcer.skip=true',
                     'preci:e2e:server:start': 'npm run docker:db:await --if-present && npm run docker:others:await --if-present',

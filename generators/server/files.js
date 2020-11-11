@@ -128,7 +128,7 @@ const serverFiles = {
             templates: [
                 'consul.yml',
                 { file: 'config/git2consul.json', method: 'copy' },
-                { file: 'config/consul-config/application.yml', method: 'copy', renameTo: () => 'central-server-config/application.yml' },
+                { file: 'config/consul-config/application.yml', renameTo: () => 'central-server-config/application.yml' },
             ],
         },
         {
@@ -138,12 +138,10 @@ const serverFiles = {
                 'jhipster-registry.yml',
                 {
                     file: 'config/docker-config/application.yml',
-                    method: 'copy',
                     renameTo: () => 'central-server-config/docker-config/application.yml',
                 },
                 {
                     file: 'config/localhost-config/application.yml',
-                    method: 'copy',
                     renameTo: () => 'central-server-config/localhost-config/application.yml',
                 },
             ],
@@ -449,7 +447,7 @@ const serverFiles = {
             ],
         },
         {
-            condition: generator => !generator.reactive && generator.applicationType !== 'uaa',
+            condition: generator => !generator.reactive && generator.applicationType !== 'uaa' && generator.authenticationType !== 'uaa',
             path: SERVER_MAIN_SRC_DIR,
             templates: [
                 {
@@ -459,11 +457,21 @@ const serverFiles = {
             ],
         },
         {
+            condition: generator => !generator.reactive && generator.applicationType !== 'uaa' && generator.authenticationType === 'uaa',
+            path: SERVER_MAIN_SRC_DIR,
+            templates: [
+                {
+                    file: 'package/config/SecurityConfiguration_uaa.java',
+                    renameTo: generator => `${generator.javaDir}config/SecurityConfiguration.java`,
+                },
+            ],
+        },
+        {
             condition: generator => generator.reactive && generator.applicationType !== 'uaa',
             path: SERVER_MAIN_SRC_DIR,
             templates: [
                 {
-                    file: 'package/config/ReactiveSecurityConfiguration.java',
+                    file: 'package/config/SecurityConfiguration_reactive.java',
                     renameTo: generator => `${generator.javaDir}config/SecurityConfiguration.java`,
                 },
             ],
@@ -809,10 +817,7 @@ const serverFiles = {
         },
         {
             condition: generator =>
-                !generator.reactive &&
-                generator.authenticationType === 'oauth2' &&
-                generator.applicationType === 'gateway' &&
-                generator.serviceDiscoveryType,
+                !generator.reactive && generator.authenticationType === 'oauth2' && generator.applicationType === 'gateway',
             path: SERVER_MAIN_SRC_DIR,
             templates: [
                 {
@@ -847,16 +852,6 @@ const serverFiles = {
                 {
                     file: 'package/client/TokenRelayRequestInterceptor.java',
                     renameTo: generator => `${generator.javaDir}client/TokenRelayRequestInterceptor.java`,
-                },
-            ],
-        },
-        {
-            condition: generator => !generator.reactive && generator.authenticationType === 'oauth2',
-            path: SERVER_MAIN_SRC_DIR,
-            templates: [
-                {
-                    file: 'package/config/SecurityConfiguration.java',
-                    renameTo: generator => `${generator.javaDir}config/SecurityConfiguration.java`,
                 },
             ],
         },
@@ -1031,8 +1026,14 @@ const serverFiles = {
                     file: 'package/config/CloudDatabaseConfiguration.java',
                     renameTo: generator => `${generator.javaDir}config/CloudDatabaseConfiguration.java`,
                 },
+            ],
+        },
+        {
+            condition: generator => generator.databaseType !== 'no',
+            path: SERVER_MAIN_SRC_DIR,
+            templates: [
                 {
-                    file: 'package/config/DatabaseConfiguration.java',
+                    file: generator => `package/config/DatabaseConfiguration_${generator.databaseType}.java`,
                     renameTo: generator => `${generator.javaDir}config/DatabaseConfiguration.java`,
                 },
             ],
@@ -1110,11 +1111,11 @@ const serverFiles = {
             path: SERVER_MAIN_SRC_DIR,
             templates: [
                 {
-                    file: 'package/repository/reactive/ReactiveN1qlCouchbaseRepository.java',
+                    file: 'package/repository/ReactiveN1qlCouchbaseRepository.java',
                     renameTo: generator => `${generator.javaDir}repository/ReactiveN1qlCouchbaseRepository.java`,
                 },
                 {
-                    file: 'package/repository/reactive/CustomReactiveN1qlCouchbaseRepository.java',
+                    file: 'package/repository/CustomReactiveN1qlCouchbaseRepository.java',
                     renameTo: generator => `${generator.javaDir}repository/CustomReactiveN1qlCouchbaseRepository.java`,
                 },
             ],
@@ -1130,16 +1131,6 @@ const serverFiles = {
                 {
                     file: 'package/config/WebsocketSecurityConfiguration.java',
                     renameTo: generator => `${generator.javaDir}config/WebsocketSecurityConfiguration.java`,
-                },
-            ],
-        },
-        {
-            condition: generator => generator.databaseType === 'cassandra',
-            path: SERVER_MAIN_SRC_DIR,
-            templates: [
-                {
-                    file: 'package/config/CassandraConfiguration.java',
-                    renameTo: generator => `${generator.javaDir}config/CassandraConfiguration.java`,
                 },
             ],
         },
@@ -1706,12 +1697,26 @@ const serverFiles = {
         {
             condition: generator =>
                 generator.skipUserManagement &&
+                generator.authenticationType !== 'oauth2' &&
                 generator.authenticationType !== 'uaa' &&
                 ['monolith', 'gateway'].includes(generator.applicationType),
             path: SERVER_TEST_SRC_DIR,
             templates: [
                 {
-                    file: 'package/web/rest/AccountResourceIT.java',
+                    file: 'package/web/rest/AccountResourceIT_skipUserManagement.java',
+                    renameTo: generator => `${generator.testDir}web/rest/AccountResourceIT.java`,
+                },
+            ],
+        },
+        {
+            condition: generator =>
+                generator.skipUserManagement &&
+                generator.authenticationType === 'oauth2' &&
+                ['monolith', 'gateway'].includes(generator.applicationType),
+            path: SERVER_TEST_SRC_DIR,
+            templates: [
+                {
+                    file: 'package/web/rest/AccountResourceIT_oauth2.java',
                     renameTo: generator => `${generator.testDir}web/rest/AccountResourceIT.java`,
                 },
             ],
@@ -1875,16 +1880,32 @@ const serverFiles = {
                     renameTo: generator => `${generator.testDir}service/mapper/UserMapperTest.java`,
                 },
                 {
-                    file: 'package/web/rest/AccountResourceIT.java',
-                    renameTo: generator => `${generator.testDir}web/rest/AccountResourceIT.java`,
-                },
-                {
                     file: 'package/config/NoOpMailConfiguration.java',
                     renameTo: generator => `${generator.testDir}config/NoOpMailConfiguration.java`,
                 },
                 {
                     file: 'package/web/rest/UserResourceIT.java',
                     renameTo: generator => `${generator.testDir}web/rest/UserResourceIT.java`,
+                },
+            ],
+        },
+        {
+            condition: generator => !generator.skipUserManagement && generator.authenticationType !== 'oauth2',
+            path: SERVER_TEST_SRC_DIR,
+            templates: [
+                {
+                    file: 'package/web/rest/AccountResourceIT.java',
+                    renameTo: generator => `${generator.testDir}web/rest/AccountResourceIT.java`,
+                },
+            ],
+        },
+        {
+            condition: generator => !generator.skipUserManagement && generator.authenticationType === 'oauth2',
+            path: SERVER_TEST_SRC_DIR,
+            templates: [
+                {
+                    file: 'package/web/rest/AccountResourceIT_oauth2.java',
+                    renameTo: generator => `${generator.testDir}web/rest/AccountResourceIT.java`,
                 },
             ],
         },
@@ -1921,7 +1942,7 @@ function writeFiles() {
         },
 
         writeFiles() {
-            this.writeFilesToDisk(serverFiles, this, false, this.fetchFromInstalledJHipster('server/templates'));
+            this.writeFilesToDisk(serverFiles);
         },
     };
 }
